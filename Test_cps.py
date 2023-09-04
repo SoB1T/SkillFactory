@@ -148,7 +148,7 @@ class Board:
             f = f"{chr(65 + i)} | " + " | ".join(self.radar[i])
             print(f)
 
-
+#функиця мейн для тестов не забудь написать свою логику
 def main():
     player_board = Board(6)
     computer_board = Board(6)
