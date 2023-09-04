@@ -62,13 +62,12 @@ class Board:
         self.radar = [["~" for i in range(size)] for i in range(size)]
         self.ships_cords = set()
         self.ships = []
-        self.size_ship_vars = []  # костыль что бы во внешней логике было достаточно вызвать Board и предоставить size_ship_vars
         self.board_coords = self._get_coords_board(size)
 
     def _get_coords_board(self, size):
         coords = set()
-        for i in range(0, size + 1):
-            for d in range(0, size + 1):
+        for i in range(0, size ):
+            for d in range(0, size ):
                 coords.add((i, d))
         return tuple(coords)
 
@@ -78,10 +77,10 @@ class Board:
             x = random.randint(0, self.size - 1)
             y = random.randint(0, self.size - 1)
             rotation = random.choice(["left", "right", "up", "dawn"])
-            Ship(int(size), x, y, rotation)
-            ship = Ship._get_coords
-            aura = Ship._get_coords_aura
-            if self.can_plays_ship(ship):
+            ship = Ship(int(size), x, y, rotation)
+            ship = ship.coords
+            aura = ship.aura#надо спросить почему корды из экземпляра достать получилось а ауру нет
+            if self.can_plays_ship(ship,self.board_coords):
                 if self.other_ship(aura, self.ships_cords):
                     self.add_ship(ship, rotation, x, y)
                     break
@@ -90,14 +89,21 @@ class Board:
             else:
                 continue
 
-    def can_plays_ship(self, ship):
-        if ship in self.board_coords:
-            return True
-        else:
-            return False
+    def can_plays_ship(self,ship, board_coords):
+        for i in ship:
+            if i in board_coords:
+                return True
+            else:
+                return False
 
-    def other_ship(self, aura, ships_cords):
-        intersec = ships_cords.intersection(aura)
+    def other_ship(self,aura, ships_cords):
+        intersec = []
+        for i in aura:
+            if i in ships_cords:
+
+                intersec.append(1)
+            else:
+                pass
         if intersec:
             return False
         else:
@@ -105,26 +111,26 @@ class Board:
 
     def add_ship(self, ship, rotation, x, y):
 
-        self.ships.append([x, y])
+        self.ships.append((x, y))
         if rotation == "left":
             for i in range(ship.size):
                 self.grid[x + i][y] = "■"
-                self.ships_cords.append([x + i, y])
+                self.ships_cords.add((x + i, y))
 
         elif rotation == "right":
             for i in range(ship.size):
                 self.grid[x - i][y] = "■"
-                self.ships_cords.append([x - i, y])
+                self.ships_cords.add((x - i, y))
 
         elif rotation == "up":
             for i in range(ship.size):
                 self.grid[x][y + i] = "■"
-                self.ships_cords.append([x, y + i])
+                self.ships_cords.add((x, y + i))
 
         elif rotation == "dawn":
             for i in range(ship.size):
                 self.grid[x][y - i] = "■"
-                self.ships_cords.append([x, y - i])
+                self.ships_cords.add((x, y - i))
 
     # self.Ship.nose
 
