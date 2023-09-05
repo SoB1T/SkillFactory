@@ -9,42 +9,42 @@ class Ship:
         self.size = size
         self.hp = size
         self.rotation = rotation
-        self.coords = self._get_coords(x, y, size, rotation)
-        self.aura = self._get_coords_aura(x, y, size, rotation, self.coords)
+        self.coords = self._get_coords()
+        self.aura = self._get_coords_aura()
 
-    def _get_coords_aura(self, x, y, size, rotation, coords):
+    def _get_coords_aura(self):
         aura = set()
-        if rotation == "left" or rotation == "right":
-            for d in range(y - 1, y + 2):
-                for i in range(x - 1, x + size + 1):
-                    if (i, d) in coords:
+        if self.rotation == "left" or self.rotation == "right":
+            for d in range(self.y - 1, self.y + 2):
+                for i in range(self.x - 1, self.x + self.size + 1):
+                    if (i, d) in self.coords:
                         continue
                     else:
                         aura.add((i, d))
             return tuple(aura)
-        if rotation == "up" or rotation == "dawn":
-            for d in range(y - 1, y + size + 1):
-                for i in range(x - 1, x + 2):
-                    if (i, d) in coords:
+        if self.rotation == "up" or self.rotation == "dawn":
+            for d in range(self.y - 1, self.y + self.size + 1):
+                for i in range(self.x - 1,self. x + 2):
+                    if (i, d) in self.coords:
                         continue
                     else:
                         aura.add((i, d))
             return tuple(aura)
 
-    def _get_coords(self, x, y, size, rotation):
+    def _get_coords(self):
         coords = set()
-        if rotation == "up":
-            for i in range(size):
-                coords.add((x, y - i))
-        if rotation == "dawn":
-            for i in range(size):
-                coords.add((x, y + i))
-        if rotation == "right":
-            for i in range(size):
-                coords.add((x - i, y))
-        if rotation == "left":
-            for i in range(size):
-                coords.add((x + i, y))
+        if self.rotation == "up":
+            for i in range(self.size):
+                coords.add((self.x, self.y - i))
+        if self.rotation == "dawn":
+            for i in range(self.size):
+                coords.add((self.x, self.y + i))
+        if self.rotation == "right":
+            for i in range(self.size):
+                coords.add((self.x - i, self.y))
+        if self.rotation == "left":
+            for i in range(self.size):
+                coords.add((self.x + i, self.y))
 
         return tuple(coords)
 
@@ -78,57 +78,60 @@ class Board:
             y = random.randint(0, self.size - 1)
             rotation = random.choice(["left", "right", "up", "dawn"])
             ship = Ship(int(size), x, y, rotation)
-            ship = ship.coords
-            aura = ship.aura#надо спросить почему корды из экземпляра достать получилось а ауру нет
-            if self.can_plays_ship(ship,self.board_coords):
-                if self.other_ship(aura, self.ships_cords):
-                    self.add_ship(ship, rotation, x, y)
+            #надо спросить почему корды из экземпляра достать получилось а ауру нет
+            if self.can_plays_ship(ship.coords):
+                if self.other_ship(ship.aura,ship.coords):
+                    self.add_ship(ship.size, rotation, x, y)
                     break
                 else:
                     continue
             else:
                 continue
 
-    def can_plays_ship(self,ship, board_coords):
+    def can_plays_ship(self,ship):
         for i in ship:
-            if i in board_coords:
-                return True
+            if i in self.board_coords:
+                pass
             else:
                 return False
+        return True
 
-    def other_ship(self,aura, ships_cords):
+    def other_ship(self,aura,coords):
         intersec = []
         for i in aura:
-            if i in ships_cords:
-
+            if i in self.ships_cords:
                 intersec.append(1)
+                if coords in self.ships_cords:
+                    intersec.append(1)
+                else:
+                    pass
             else:
                 pass
-        if intersec:
+        if len(intersec)>0:
             return False
         else:
             return True
 
-    def add_ship(self, ship, rotation, x, y):
+    def add_ship(self,ship,rotation, x, y):
 
         self.ships.append((x, y))
         if rotation == "left":
-            for i in range(ship.size):
+            for i in range(ship):
                 self.grid[x + i][y] = "■"
                 self.ships_cords.add((x + i, y))
 
         elif rotation == "right":
-            for i in range(ship.size):
+            for i in range(ship):
                 self.grid[x - i][y] = "■"
                 self.ships_cords.add((x - i, y))
 
         elif rotation == "up":
-            for i in range(ship.size):
+            for i in range(ship):
                 self.grid[x][y + i] = "■"
                 self.ships_cords.add((x, y + i))
 
         elif rotation == "dawn":
-            for i in range(ship.size):
+            for i in range(ship):
                 self.grid[x][y - i] = "■"
                 self.ships_cords.add((x, y - i))
 
