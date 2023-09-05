@@ -91,29 +91,25 @@ class Board:
         for i in ship.coords:
             if i in self.board_coords:
                 pass
+                if i in self.ships_cords:
+                    return False
+                else:
+                    pass
             else:
                 return False
         return True
 
     def other_ship(self, ship):
-        intersec = []
         for i in ship.aura:
             if i in self.ships_cords:
-                print(i,self.ships_cords)
-
-                intersec.append(1)
-                for i in ship.coords:
-                    if i in self.ships_cords:
-                        intersec.append(1)
-                    else:
-                        pass
+                print(f'корды{ship.coords}кусок ауры{i}кусок доски{self.ships_cords}')
+                print("Ну что не так")
+                return False
             else:
+                print(f'корды{ship.coords}кусок ауры{i}кусок доски{self.ships_cords}')
+                print("Ну тут так")
                 pass
-        if intersec:
-            return False
-        else:
-            return True
-
+        return True
     def add_ship(self, ship):
 
         self.ships.append((ship.x, ship.y))
