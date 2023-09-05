@@ -1,7 +1,6 @@
 import random
 
 
-
 class Ship:
     def __init__(self, size, x, y, rotation):
         self.x = x
@@ -24,7 +23,7 @@ class Ship:
             return tuple(aura)
         if self.rotation == "up" or self.rotation == "dawn":
             for d in range(self.y - 1, self.y + self.size + 1):
-                for i in range(self.x - 1,self. x + 2):
+                for i in range(self.x - 1, self.x + 2):
                     if (i, d) in self.coords:
                         continue
                     else:
@@ -62,12 +61,12 @@ class Board:
         self.radar = [["~" for i in range(size)] for i in range(size)]
         self.ships_cords = set()
         self.ships = []
-        self.board_coords = self._get_coords_board(size)
+        self.board_coords = self._get_coords_board()
 
-    def _get_coords_board(self, size):
+    def _get_coords_board(self):
         coords = set()
-        for i in range(0, size ):
-            for d in range(0, size ):
+        for i in range(0, self.size):
+            for d in range(0, self.size):
                 coords.add((i, d))
         return tuple(coords)
 
@@ -78,7 +77,7 @@ class Board:
             y = random.randint(0, self.size - 1)
             rotation = random.choice(["left", "right", "up", "dawn"])
             ship = Ship(int(size), x, y, rotation)
-            #надо спросить почему корды из экземпляра достать получилось а ауру нет
+            # надо спросить почему корды из экземпляра достать получилось а ауру нет
             if self.can_plays_ship(ship):
                 if self.other_ship(ship):
                     self.add_ship(ship)
@@ -88,7 +87,7 @@ class Board:
             else:
                 continue
 
-    def can_plays_ship(self,ship):
+    def can_plays_ship(self, ship):
         for i in ship.coords:
             if i in self.board_coords:
                 pass
@@ -96,23 +95,25 @@ class Board:
                 return False
         return True
 
-    def other_ship(self,ship):
+    def other_ship(self, ship):
         intersec = []
         for i in ship.aura:
             if i in self.ships_cords:
+                print(i)
                 intersec.append(1)
-                if ship.coords in self.ships_cords:
-                    intersec.append(1)
-                else:
-                    pass
+                for i in ship.coords:
+                    if i in self.ships_cords:
+                        intersec.append(1)
+                    else:
+                        pass
             else:
                 pass
-        if len(intersec)>0:
+        if intersec:
             return False
         else:
             return True
 
-    def add_ship(self,ship):
+    def add_ship(self, ship):
 
         self.ships.append((ship.x, ship.y))
         if ship.rotation == "left":
@@ -151,7 +152,8 @@ class Board:
             f = f"{chr(65 + i)} | " + " | ".join(self.radar[i])
             print(f)
 
-#функиця мейн для тестов не забудь написать свою логику
+
+# функиця мейн для тестов не забудь написать свою логику
 def main():
     player_board = Board(6)
     computer_board = Board(6)
