@@ -54,14 +54,23 @@ class Ship:
         return self.hp == 0
 
 
+
+
 class Board:
     def __init__(self, size):
         self.size = size
         self.grid = [["~" for i in range(size)] for i in range(size)]
         self.radar = [["~" for i in range(size)] for i in range(size)]
-        self.ships_cords = set()
+        self.ships_cords = []
+        self.list_ships_cords= self._get_coords_ships()
         self.ships = []
         self.board_coords = self._get_coords_board()
+
+    def _get_coords_ships(self):
+        list = []
+        for m in self.ships_cords:
+            list.append(m[0])
+        return list
 
     def _get_coords_board(self):
         coords = set()
@@ -69,6 +78,7 @@ class Board:
             for d in range(0, self.size):
                 coords.add((i, d))
         return tuple(coords)
+
 
     def ship_randomizer(self, ship_vars):
         while True:
@@ -85,6 +95,7 @@ class Board:
                 else:
                     continue
             else:
+
                 continue
 
     def can_plays_ship(self, ship):
@@ -102,36 +113,36 @@ class Board:
     def other_ship(self, ship):
         for i in ship.aura:
             if i in self.ships_cords:
-                print(f'корды{ship.coords}кусок ауры{i}кусок доски{self.ships_cords}')
-                print("Ну что не так")
+
                 return False
             else:
-                print(f'корды{ship.coords}кусок ауры{i}кусок доски{self.ships_cords}')
-                print("Ну тут так")
-                pass
+
+                pass#(2, 0), (2, 1), (2, 2) (0, 1), (4, 3), (4, 0), (5, 5), (2, 4), (2, 5), (0, 3), (0, 4)]
         return True
     def add_ship(self, ship):
 
         self.ships.append((ship.x, ship.y))
-        if ship.rotation == "left":
-            for i in range(ship.size):
-                self.grid[ship.x + i][ship.y] = "■"
-                self.ships_cords.add((ship.x + i, ship.y))
+        for d in list(ship.coords):
+            self.ships_cords.append(d)
+            if ship.rotation == "left":
+                for i in range(ship.size):
+                    self.grid[ship.x + i][ship.y] = "■"
 
-        elif ship.rotation == "right":
-            for i in range(ship.size):
-                self.grid[ship.x - i][ship.y] = "■"
-                self.ships_cords.add((ship.x - i, ship.y))
 
-        elif ship.rotation == "up":
-            for i in range(ship.size):
-                self.grid[ship.x][ship.y - i] = "■"
-                self.ships_cords.add((ship.x, ship.y + i))
+            elif ship.rotation == "right":
+                for i in range(ship.size):
+                    self.grid[ship.x - i][ship.y] = "■"
 
-        elif ship.rotation == "dawn":
-            for i in range(ship.size):
-                self.grid[ship.x][ship.y + i] = "■"
-                self.ships_cords.add((ship.x, ship.y - i))
+
+            elif ship.rotation == "up":
+                for i in range(ship.size):
+                    self.grid[ship.x][ship.y - i] = "■"
+
+
+            elif ship.rotation == "dawn":
+                for i in range(ship.size):
+                    self.grid[ship.x][ship.y + i] = "■"
+
 
     # self.Ship.nose
 
