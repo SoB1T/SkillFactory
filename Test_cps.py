@@ -59,7 +59,7 @@ class Board:
         self.size = size
         self.grid = [["~" for i in range(size)] for i in range(size)]
         self.radar = [["~" for i in range(size)] for i in range(size)]
-        self.ships_cords = []
+        self.ships_cords = set()
         self.ships = []
         self.board_coords = self._get_coords_board()
 
@@ -115,28 +115,28 @@ class Board:
             return True
 
     def add_ship(self, ship):
-        ship_coord=set()
+
         self.ships.append((ship.x, ship.y))
         if ship.rotation == "left":
             for i in range(ship.size):
                 self.grid[ship.x + i][ship.y] = "■"
-                ship_coord.add((ship.x + i, ship.y))
+                self.ships_cords.add((ship.x + i, ship.y))
 
         elif ship.rotation == "right":
             for i in range(ship.size):
                 self.grid[ship.x - i][ship.y] = "■"
-                ship_coord.add((ship.x - i, ship.y))
+                self.ships_cords.add((ship.x - i, ship.y))
 
         elif ship.rotation == "up":
             for i in range(ship.size):
                 self.grid[ship.x][ship.y - i] = "■"
-                ship_coord.add((ship.x, ship.y + i))
+                self.ships_cords.add((ship.x, ship.y + i))
 
         elif ship.rotation == "dawn":
             for i in range(ship.size):
                 self.grid[ship.x][ship.y + i] = "■"
-                ship_coord.add((ship.x, ship.y - i))
-        return tuple(ship_coord)
+                self.ships_cords.add((ship.x, ship.y - i))
+
     # self.Ship.nose
 
     def fild(self):
