@@ -79,9 +79,9 @@ class Board:
             rotation = random.choice(["left", "right", "up", "dawn"])
             ship = Ship(int(size), x, y, rotation)
             #надо спросить почему корды из экземпляра достать получилось а ауру нет
-            if self.can_plays_ship(ship.coords):
-                if self.other_ship(ship.aura,ship.coords):
-                    self.add_ship(ship.size, rotation, x, y)
+            if self.can_plays_ship(ship):
+                if self.other_ship(ship):
+                    self.add_ship(ship)
                     break
                 else:
                     continue
@@ -89,19 +89,19 @@ class Board:
                 continue
 
     def can_plays_ship(self,ship):
-        for i in ship:
+        for i in ship.coords:
             if i in self.board_coords:
                 pass
             else:
                 return False
         return True
 
-    def other_ship(self,aura,coords):
+    def other_ship(self,ship):
         intersec = []
-        for i in aura:
+        for i in ship.aura:
             if i in self.ships_cords:
                 intersec.append(1)
-                if coords in self.ships_cords:
+                if ship.coords in self.ships_cords:
                     intersec.append(1)
                 else:
                     pass
@@ -112,28 +112,28 @@ class Board:
         else:
             return True
 
-    def add_ship(self,ship,rotation, x, y):
+    def add_ship(self,ship):
 
-        self.ships.append((x, y))
-        if rotation == "left":
-            for i in range(ship):
-                self.grid[x + i][y] = "■"
-                self.ships_cords.add((x + i, y))
+        self.ships.append((ship.x, ship.y))
+        if ship.rotation == "left":
+            for i in range(ship.size):
+                self.grid[ship.x + i][ship.y] = "■"
+                self.ships_cords.add((ship.x + i, ship.y))
 
-        elif rotation == "right":
-            for i in range(ship):
-                self.grid[x - i][y] = "■"
-                self.ships_cords.add((x - i, y))
+        elif ship.rotation == "right":
+            for i in range(ship.size):
+                self.grid[ship.x - i][ship.y] = "■"
+                self.ships_cords.add((ship.x - i, ship.y))
 
-        elif rotation == "up":
-            for i in range(ship):
-                self.grid[x][y + i] = "■"
-                self.ships_cords.add((x, y + i))
+        elif ship.rotation == "up":
+            for i in range(ship.size):
+                self.grid[ship.x][ship.y - i] = "■"
+                self.ships_cords.add((ship.x, ship.y + i))
 
-        elif rotation == "dawn":
-            for i in range(ship):
-                self.grid[x][y - i] = "■"
-                self.ships_cords.add((x, y - i))
+        elif ship.rotation == "dawn":
+            for i in range(ship.size):
+                self.grid[ship.x][ship.y + i] = "■"
+                self.ships_cords.add((ship.x, ship.y - i))
 
     # self.Ship.nose
 
