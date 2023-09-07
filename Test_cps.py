@@ -10,7 +10,7 @@ class Cell:
 
 class Ship:
     def __init__(self, size, x, y, rotation):
-        self.cell=Cell(x,y)
+        self.cell = Cell(x, y)
         self.size = size
         self.hp = size
         self.rotation = rotation
@@ -23,8 +23,8 @@ class Ship:
             for d in range(-1, 2):
                 x = self.cell.x + d
                 for i in range(-1, 2):
-                    y=self.cell.y +i
-                    aura.append(Cell(x,y))
+                    y = self.cell.y + i
+                    aura.append(Cell(x, y))
         # print(f"Начало \n корды {self.coords} \n аура {aura} ,размер  \n  {self.size},\nнос {self.cell},\nповорот {self.rotation} \n конец")
         return tuple(aura)
 
@@ -32,9 +32,9 @@ class Ship:
         coords = []
         if self.rotation == "up":
             for i in range(self.size):
-                    x = self.cell.x
-                    y = self.cell.y - i
-                    coords.append(Cell(x, y))
+                x = self.cell.x
+                y = self.cell.y - i
+                coords.append(Cell(x, y))
         if self.rotation == "dawn":
             for i in range(self.size):
                 x = self.cell.x
@@ -42,12 +42,12 @@ class Ship:
                 coords.append(Cell(x, y))
         if self.rotation == "right":
             for i in range(self.size):
-                x = self.cell.x- i
+                x = self.cell.x - i
                 y = self.cell.y
                 coords.append(Cell(x, y))
         if self.rotation == "left":
             for i in range(self.size):
-                x = self.cell.x +i
+                x = self.cell.x + i
                 y = self.cell.y
                 coords.append(Cell(x, y))
 
@@ -60,20 +60,19 @@ class Ship:
         return self.hp == 0
 
 
-
-
 class Board:
     def __init__(self, size):
         self.size = size
         self.grid = [["~" for i in range(size)] for i in range(size)]
         self.radar = [["~" for i in range(size)] for i in range(size)]
         self.ships_cords = []
-        self.list_ships_cords= self._get_coords_ships()
+        self.list_ships_cords = self._get_coords_ships()
         self.ships = []
         self.board_coords = self._get_coords_board()
         self.ship_vars = [1, 1, 1, 1, 2, 2, 3]
         print(self.ships_cords)
         print(self.ships)
+
     def _get_coords_ships(self):
         list = []
         for m in self.ships_cords:
@@ -87,22 +86,19 @@ class Board:
                 coords.append(Cell(i, d))
         return tuple(coords)
 
-
-    def ship_randomizer(self):
-        count=0
-        while count<=500:
-            vars=self.ship_vars.copy()
-            size = random.choice(vars)
+    def ship_randomizer(self, ship_var):
+        count = 0
+        while count <= 500:
+            size = ship_var
             x = random.randint(0, self.size - 1)
             y = random.randint(0, self.size - 1)
             rotation = random.choice(["left", "right", "up", "dawn"])
             ship = Ship(size, x, y, rotation)
-            count+=1
+            count += 1
             # надо спросить почему корды из экземпляра достать получилось а ауру нет
             if self.can_plays_ship(ship):
                 if self.other_ship(ship):
                     self.add_ship(ship)
-                    vars.remove(size)
                     return True
                 else:
                     continue
@@ -130,11 +126,13 @@ class Board:
                 return False
             else:
 
-                pass#(2, 0), (2, 1), (2, 2) (0, 1), (4, 3), (4, 0), (5, 5), (2, 4), (2, 5), (0, 3), (0, 4)]
+                pass  # (2, 0), (2, 1), (2, 2) (0, 1), (4, 3), (4, 0), (5, 5), (2, 4), (2, 5), (0, 3), (0, 4)]
         return True
-    def add_ship(self, ship):
 
-        self.ships.append((ship.cell.x, ship.cell.y))
+    def add_ship(self, ship):
+        x = ship.cell.x
+        y = ship.cell.y
+        self.ships.append(Cell(x, y))
         for d in list(ship.coords):
             self.ships_cords.append(d)
             if ship.rotation == "left":
@@ -158,19 +156,17 @@ class Board:
 
     def fill_the_field(self):
         counter = 0
-        ships = self.ship_vars.copy()
-        while True:
-            counter += 1
-            if counter >= 500:
-                print("а может ошибка и тут")
-                """откатить все изменения"""
-                return False
-            else:
-                ships=0
-                if self.ship_randomizer():
-                    if ships==7:
-                        ships=+1
-                        return True
+        ships = self.ship_vars
+
+        for i in ships:
+            while True:
+                counter += 1
+                if counter >= 500:
+                    print("а может ошибка и тут")
+                    return False
+                else:
+                    if self.ship_randomizer(i):
+                        break
                     else:
                         continue
 
@@ -293,5 +289,6 @@ def main():
     #     except Exception as e:
     #         print("Ошибка:", e)
     #
+
 
 main()
