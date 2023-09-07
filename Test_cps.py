@@ -72,6 +72,8 @@ class Board:
         self.ships = []
         self.board_coords = self._get_coords_board()
         self.ship_vars = [1, 1, 1, 1, 2, 2, 3]
+        print(self.ships_cords)
+        print(self.ships)
     def _get_coords_ships(self):
         list = []
         for m in self.ships_cords:
@@ -79,10 +81,10 @@ class Board:
         return list
 
     def _get_coords_board(self):
-        coords = set()
+        coords = []
         for i in range(0, self.size):
             for d in range(0, self.size):
-                coords.add((i, d))
+                coords.append(Cell(i, d))
         return tuple(coords)
 
 
