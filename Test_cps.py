@@ -60,14 +60,15 @@ class Ship:
 
 
 class Board:
-    def __init__(self, size):
+    def __init__(self, size, vis_ships=False):
         self.size = size
         self.grid = [["~" for i in range(size)] for i in range(size)]
         self.radar = [["~" for i in range(size)] for i in range(size)]
         self.full_coords = []
         self.ships = []
-        self.board_coords = self._get_coords_board()#пер
-        self.ship_vars = [1,1,1,1,2,2, 3]#временный вариант
+        self.vis_ships = vis_ships
+        self.board_coords = self._get_coords_board()  # пер
+        self.ship_vars = [1, 1, 1, 1, 2, 2, 3]  # временный вариант
 
     def _get_coords_board(self):
         coords = []
@@ -101,7 +102,7 @@ class Board:
         for i in ship.coords:
             if i in self.board_coords:
                 pass
-                if i in self.full_coords :
+                if i in self.full_coords:
                     return False
                 else:
                     pass
@@ -111,7 +112,7 @@ class Board:
 
     def other_ship(self, ship):
         for i in ship.coords:
-            if i in self.full_coords :
+            if i in self.full_coords:
                 return False
             else:
 
@@ -124,24 +125,18 @@ class Board:
 
         self.ships.append(Cell(x, y))
         for i in ship.aura:
-            self.full_coords .append(i)
+            self.full_coords.append(i)
         for d in list(ship.coords):
-            self.full_coords .append(d)
+            self.full_coords.append(d)
             if ship.rotation == "left":
                 for i in range(ship.size):
                     self.grid[ship.cell.x + i][ship.cell.y] = "■"
-
-
             elif ship.rotation == "right":
                 for i in range(ship.size):
                     self.grid[ship.cell.x - i][ship.cell.y] = "■"
-
-
             elif ship.rotation == "up":
                 for i in range(ship.size):
                     self.grid[ship.cell.x][ship.cell.y - i] = "■"
-
-
             elif ship.rotation == "dawn":
                 for i in range(ship.size):
                     self.grid[ship.cell.x][ship.cell.y + i] = "■"
@@ -161,8 +156,12 @@ class Board:
                         continue
         return True
 
-
     # self.Ship.nose
+    def fild_chacer(self):
+        if self.vis_ships:
+            self.fild()
+        else:
+            self.empty_fild()
 
     def fild(self):
         head = "    " + " | ".join(str(i + 1) for i in range(self.size))
@@ -171,7 +170,7 @@ class Board:
             f = f"{chr(65 + i)} | " + " | ".join(self.grid[i])
             print(f)
 
-    def radar(self):
+    def empty_fild(self):
         head = "    " + " | ".join(str(i + 1) for i in range(self.size))
         print(head)
         for i in range(self.size):
@@ -181,14 +180,16 @@ class Board:
 
 # функиця мейн для тестов не забудь написать свою логику
 def main():
-    player_board = Board(6)
-    computer_board = Board(6)
+    player_board = Board(6, True)
+    # computer_board = Board(6, False)
     success = False
     while success is False:
         success = player_board.fill_the_field()
-
-    player_board.fild()
-
+    # success = False
+    # while success is False:
+    #     success = computer_board.fill_the_field()
+    player_board.fild_chacer()
+    # computer_board.fild_chacer()
 
     # size_ship_vars = ["1", "1", "1", "1", "2", "2", "3"]
     # player_ships = size_ship_vars
