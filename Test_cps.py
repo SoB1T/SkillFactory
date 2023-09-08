@@ -19,13 +19,12 @@ class Ship:
 
     def _get_coords_aura(self):
         aura = []
-        for cell in self.coords:
+        for i in self.coords:
             for d in range(-1, 2):
-                x = self.cell.x + d
-                for i in range(-1, 2):
-                    y = self.cell.y + i
+                x = i.x + d
+                for j in range(-1, 2):
+                    y = i.y + j
                     aura.append(Cell(x, y))
-        # print(f"Начало \n корды {self.coords} \n аура {aura} ,размер  \n  {self.size},\nнос {self.cell},\nповорот {self.rotation} \n конец")
         return tuple(aura)
 
     def _get_coords(self):
@@ -65,19 +64,10 @@ class Board:
         self.size = size
         self.grid = [["~" for i in range(size)] for i in range(size)]
         self.radar = [["~" for i in range(size)] for i in range(size)]
-        self.ships_cords = []
-        self.list_ships_cords = self._get_coords_ships()
+        self.full_coords = []
         self.ships = []
-        self.board_coords = self._get_coords_board()
-        self.ship_vars = [1, 1, 1, 1, 2, 2, 3]
-        print(self.ships_cords)
-        print(self.ships)
-
-    def _get_coords_ships(self):
-        list = []
-        for m in self.ships_cords:
-            list.append(m[0])
-        return list
+        self.board_coords = self._get_coords_board()#пер
+        self.ship_vars = [1,1,1,1,2,2, 3]#временный вариант
 
     def _get_coords_board(self):
         coords = []
@@ -111,7 +101,7 @@ class Board:
         for i in ship.coords:
             if i in self.board_coords:
                 pass
-                if i in self.ships_cords:
+                if i in self.full_coords :
                     return False
                 else:
                     pass
@@ -120,9 +110,8 @@ class Board:
         return True
 
     def other_ship(self, ship):
-        for i in ship.aura:
-            if i in self.ships_cords:
-
+        for i in ship.coords:
+            if i in self.full_coords :
                 return False
             else:
 
@@ -132,9 +121,12 @@ class Board:
     def add_ship(self, ship):
         x = ship.cell.x
         y = ship.cell.y
+
         self.ships.append(Cell(x, y))
+        for i in ship.aura:
+            self.full_coords .append(i)
         for d in list(ship.coords):
-            self.ships_cords.append(d)
+            self.full_coords .append(d)
             if ship.rotation == "left":
                 for i in range(ship.size):
                     self.grid[ship.cell.x + i][ship.cell.y] = "■"
@@ -156,19 +148,18 @@ class Board:
 
     def fill_the_field(self):
         counter = 0
-        ships = self.ship_vars
 
-        for i in ships:
+        for i in self.ship_vars:
             while True:
                 counter += 1
                 if counter >= 500:
-                    print("а может ошибка и тут")
                     return False
                 else:
                     if self.ship_randomizer(i):
                         break
                     else:
                         continue
+        return True
 
 
     # self.Ship.nose
@@ -198,9 +189,6 @@ def main():
 
     player_board.fild()
 
-    player_board.fild()
-    print(player_board.ships_cords)
-    print(player_board.ships)
 
     # size_ship_vars = ["1", "1", "1", "1", "2", "2", "3"]
     # player_ships = size_ship_vars
