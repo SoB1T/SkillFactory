@@ -60,15 +60,14 @@ class Ship:
 
 
 class Board:
-    def __init__(self, size, vis_ships=False):
+    def __init__(self, size):
         self.size = size
         self.grid = [["~" for i in range(size)] for i in range(size)]
         self.radar = [["~" for i in range(size)] for i in range(size)]
         self.full_coords = []
         self.ships = []
-        self.vis_ships = vis_ships
         self.board_coords = self._get_coords_board()  # пер
-        self.ship_vars = [1, 1, 1, 1, 2, 2, 3]  # временный вариант
+        self.ship_vars = [3,2,2,1,1,1,1]  # временный вариант
 
     def _get_coords_board(self):
         coords = []
@@ -143,25 +142,27 @@ class Board:
 
     def fill_the_field(self):
         counter = 0
-
+        ult_counter = 0
         for i in self.ship_vars:
             while True:
+
                 counter += 1
                 if counter >= 500:
+                    ult_counter+=1
+                    return False
+                if ult_counter >= 5:
+                    self.__init__(self.size)
                     return False
                 else:
                     if self.ship_randomizer(i):
                         break
                     else:
                         continue
+
+
         return True
 
-    # self.Ship.nose
-    def fild_chacer(self):
-        if self.vis_ships:
-            self.fild()
-        else:
-            self.empty_fild()
+    # self.Ship.n
 
     def fild(self):
         head = "    " + " | ".join(str(i + 1) for i in range(self.size))
@@ -180,17 +181,17 @@ class Board:
 
 # функиця мейн для тестов не забудь написать свою логику
 def main():
-    player_board = Board(6, True)
-    # computer_board = Board(6, False)
+    player_board = Board(6)
+    computer_board = Board(6)
     success = False
     while success is False:
         success = player_board.fill_the_field()
-    # success = False
-    # while success is False:
-    #     success = computer_board.fill_the_field()
-    player_board.fild_chacer()
-    # computer_board.fild_chacer()
+    success = False
+    while success is False:
+        success = computer_board.fill_the_field()
 
+    computer_board.fild()
+    player_board.fild()
     # size_ship_vars = ["1", "1", "1", "1", "2", "2", "3"]
     # player_ships = size_ship_vars
     # comp_ships = size_ship_vars
