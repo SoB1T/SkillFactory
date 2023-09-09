@@ -56,7 +56,8 @@ class Ship:
         self.hp -= 1
 
     def destrou(self):
-        return self.hp == 0
+        if self.hp==0:
+            return self.hp == 0
 
 
 class Board:
@@ -65,7 +66,7 @@ class Board:
         self.grid = [["~" for i in range(size)] for i in range(size)]
         self.radar = [["~" for i in range(size)] for i in range(size)]
         self.full_coords = []
-        self.ships = [] 
+        self.ships = []
         self.ship_vars = [3,2,2,1,1,1,1]  # временный вариант
 
 
@@ -172,8 +173,53 @@ class Board:
             f = f"{chr(65 + i)} | " + " | ".join(self.radar[i])
             print(f)
 
-
+class Player:
+    def __init__(self,size):
+        self.player_move= []
+        self.filde=[]
+        self.ships=[]
+        self.size=size
+    def gen_fild(self):
+        board=Board(self.size)
+        success = False
+        while success is False:
+            success = board.fill_the_field()
+        self.filde.append(board.fild())
+        self.ships.append(board.ships)
+class Ai(Player):
+    def make_move(self):
+        while True:
+            x = random.randint(0, self.size - 1)
+            y = random.randint(0, self.size - 1)
+            if x in self.player_move and y in self.player_move:
+                continue
+            else:
+                self.player_move.append(Cell(x,y))
+                break
+class User(Player):
+    def move_in_board(self,shot):
+        if shot.x not in range(0,6) and shot.y not in range(0,6):
+            return False
+        else:
+            return True
+    def make_move(self):
+        try:
+            x,y =input("Сделайте свой ход, например A1")
+            x,y = int(x), int(y)
+            shot= Cell(x,y)
+            if not self.move_in_board(shot):
+                raise CellOutException("Вне границы доски")
+            else:
+                self.player_move.append(shot)
+                return True
+        except ValueError:
+            print("Неправильный ввод")
+        except CellOutException as e:
+            print(e)
 # функиця мейн для тестов не забудь написать свою логику
+class CellOutException(Exception):
+    pass
+
 def main():
     player_board = Board(6)
     computer_board = Board(6)
