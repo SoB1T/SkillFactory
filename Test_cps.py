@@ -65,16 +65,9 @@ class Board:
         self.grid = [["~" for i in range(size)] for i in range(size)]
         self.radar = [["~" for i in range(size)] for i in range(size)]
         self.full_coords = []
-        self.ships = []
-        self.board_coords = self._get_coords_board()  # пер
+        self.ships = [] 
         self.ship_vars = [3,2,2,1,1,1,1]  # временный вариант
 
-    def _get_coords_board(self):
-        coords = []
-        for i in range(0, self.size):
-            for d in range(0, self.size):
-                coords.append(Cell(i, d))
-        return tuple(coords)
 
     def ship_randomizer(self, ship_var):
         count = 0
@@ -99,7 +92,9 @@ class Board:
 
     def can_plays_ship(self, ship):
         for i in ship.coords:
-            if i in self.board_coords:
+            x = i.x
+            y = i.y
+            if x in range(0,6) and y in range(0,6):
                 pass
                 if i in self.full_coords:
                     return False
@@ -121,8 +116,8 @@ class Board:
     def add_ship(self, ship):
         x = ship.cell.x
         y = ship.cell.y
-
-        self.ships.append(Cell(x, y))
+        self.ships.append(ship)
+        # self.ships.append(Cell(x, y))
         for i in ship.aura:
             self.full_coords.append(i)
         for d in list(ship.coords):
@@ -142,17 +137,16 @@ class Board:
 
     def fill_the_field(self):
         counter = 0
-        ult_counter = 0
+
         for i in self.ship_vars:
             while True:
 
                 counter += 1
                 if counter >= 500:
-                    ult_counter+=1
-                    return False
-                if ult_counter >= 5:
+
                     self.__init__(self.size)
                     return False
+
                 else:
                     if self.ship_randomizer(i):
                         break
@@ -189,9 +183,10 @@ def main():
     success = False
     while success is False:
         success = computer_board.fill_the_field()
-
-    computer_board.fild()
     player_board.fild()
+    print(f"Корабли{player_board.ships} координаты{player_board.full_coords}")
+    computer_board.fild()
+
     # size_ship_vars = ["1", "1", "1", "1", "2", "2", "3"]
     # player_ships = size_ship_vars
     # comp_ships = size_ship_vars
