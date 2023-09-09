@@ -214,21 +214,20 @@ class User(Player):
             return True
 
     def make_move(self):
-        try:
-            x, y = input("Сделайте свой ход, например A1").split()
-            x, y = int(y - 1), int(ord(x) - ord('A'))
-            shot = Cell(x, y)
-            if not self.move_in_board(shot):
-                raise CellOutException("Вне границы доски")
-            else:
-                self.player_move.append(shot)
-                return True
-        except ValueError:
-            print("Неправильный ввод")
-            return False
-        except CellOutException as e:
-            print(e)
-            return False
+        while True:
+            try:
+                x, y = input("Сделайте свой ход, например A1").split()
+                x, y = int(y - 1), int(ord(x) - ord('A'))
+                shot = Cell(x, y)
+                if not self.move_in_board(shot):
+                    raise CellOutException("Вне границы доски")
+                else:
+                    self.player_move.append(shot)
+                    return True
+            except ValueError:
+                print("Неправильный ввод")
+            except CellOutException as e:
+                print(e)
 
 
 class CellOutException(Exception):
@@ -283,8 +282,7 @@ class Game_controler:
                         self.player_1.board.radar[i.x][i.y] = "O"
                         pass
             return False
-        else:
-            moving_player.make_move()
+
 
     def moves(self):
         if self.move_count == 0:
