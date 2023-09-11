@@ -18,7 +18,7 @@ class Ship:
         self.aura = self._get_coords_aura()
 
     def __repr__(self):
-        return f'Обьект Ship, размер={self.size}, координаты={self.cell}, количество здоровья={self.hp}, нос смотрит на {self.rotation}'
+        return f'Ship {self.size} {self.cell} {self.hp} {self.rotation}'
 
     def _get_coords_aura(self):
         aura = []
@@ -61,8 +61,6 @@ class Ship:
             return True
         return False
 
-    def destrou(self):
-        return True
 
 
 class Board:
@@ -203,7 +201,9 @@ class Ai(Player):
                 continue
             else:
                 self.player_move.append(shot)
+
                 return True
+
 
 
 class User(Player):
@@ -245,28 +245,71 @@ class Game_controler:
         self.conts = []
         self.move_count = len(self.conts)
 
-    
-    def player_swither(self):
-
-        if self.move_count % 2 == 0:
-            move_player = self.players[0]
-            next_player = self.players[1]
-        else:
-            move_player = self.players[1]
-            next_player = self.players[0]
-        return [move_player, next_player]
-    def moves_queue(self):
+    def hit_check(self,moving_player, other_player):
+        if moving_player.make_move():
+            for ship in other_player.ships:
+                for i in moving_player.player_move:
+                    if i in ship.coords:
+                        if ship.hit():
+                            other_player.ships_destrou.append(1)
+                            if moving_player == self.player_1:
+                                print(f"Игрок уничтожил корабль компьютера")
+                            else:
+                                print(f"Компьютер уничтожил корабль игрока")
+                        else:
+                            if moving_player == self.player_2:
+                                self.player_1.board.grid[i.x][i.y] = "X"
+                                print(f"Компьютер поразил корабль игрока")
+                                pass
+                            else:
+                                print(f"Игрок поразил корабль компьютера")
+                                self.player_1.board.radar[i.x][i.y] = "X"
+                                pass
+                        return True
+                    else:
+                        if moving_player == self.player_2:
+                            print("Компьютер промазал")
+                            self.player_1.board.grid[i.x][i.y] = "O"
+                            pass
+                        else:
+                            print("Вы промазали")
+                            self.player_1.board.radar[i.x][i.y] = "O"
+                            pass
+                        return False
+    def move(self):
         random.shuffle(self.players)
+        moving_player, other_player = self.players[0], self.players[1]
+        while True:
+            print("-"* 100)
+            print("Поле противника(компьютер)")
+            self.player_1.board.empty_fild()
+            print("Ваше поле")
+            self.player_1.board.fild()
+            if self.player_1.life_ships == 0:
+                print("Поле противника(компьютер)")
+                self.player_2.board.fild()
+                print("Ваше поле")
+                self.player_1.board.fild()
+                print("Компьютер победил")
+                return True
+            elif self.player_2.life_ships == 0:
+                print("Поле противника(компьютер)")
+                self.player_2.board.fild()
+                print("Ваше поле")
+                self.player_1.board.fild()
+                print("Игрок победил")
+                return True
+            else:
+                if self.hit_check(moving_player, other_player):
+                    continue
+                else:
+                    if moving_player == self.player_1:
+                        moving_player, other_player = self.player_2, self.player_1
+                    else:
+                        moving_player, other_player = self.player_1, self.player_2
 
-    def move_counter(self):
-        self.conts.append(1)
+
 def main():
     game = Game_controler()
-    print(game.player_1.board.fild())
-    print(game.player_2.board.fild())
-    success = False
-    while success is False:
-        success = game.moves()
-
-
+    game.move()
 main()
