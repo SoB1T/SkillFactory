@@ -3,16 +3,16 @@ from dataclasses import dataclass
 
 
 @dataclass
-class Cell:
+class Cell: #обьект с помощью которого мы можем красиво любоватся координатами
     x: int
     y: int
 
 
-class Ship:
+class Ship: #сам корабль
     def __init__(self, size, x, y, rotation):
-        self.cell = Cell(x, y)
-        self.size = size
-        self.hp = size
+        self.cell = Cell(x, y) #его красивые координаты носа
+        self.size = size #его менее красивый размер
+        self.hp = size # его здоровье
         self.rotation = rotation
         self.coords = self._get_coords()
         self.aura = self._get_coords_aura()
@@ -254,8 +254,13 @@ class Game_controler:
                             other_player.ships_destrou.append(1)
                             if moving_player == self.player_1:
                                 print(f"Игрок уничтожил корабль компьютера")
+                                for i in ship.aura:
+                                    self.player_1.board.radar[i.x][i.y] = "X"
                             else:
                                 print(f"Компьютер уничтожил корабль игрока")
+                                for i in ship.aura:
+                                    self.player_1.board.grid[i.x][i.y] = "X"
+
                         else:
                             if moving_player == self.player_2:
                                 self.player_1.board.grid[i.x][i.y] = "X"
