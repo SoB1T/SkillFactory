@@ -207,7 +207,7 @@ class Game_Сontroler:  # класс игрового контролера
         self.player_2 = Ai(6)  # компьютер
         self.players = [self.player_2, self.player_1]  # очередность игроков
 
-    def hit_check(self, shot, other_player,moving_player):
+    def hit_check(self, shot, other_player, moving_player):
         for ship in other_player.ships:
             if shot in ship.coords:
                 if ship.hit():
@@ -280,7 +280,27 @@ class Game_Сontroler:  # класс игрового контролера
 
 def start_game():  # я не знаю зачем это существует, но пусть будет
     game = Game_Сontroler()
-    game.move()
+    Reference = f"\nИгра Морской бой" \
+                f"\nНаписана: SoB вкачестве практической работы для курса Python разработчик" \
+                f"\n на образовательной платформе SkillFactory"
+    Rules = f"У двух игроков имеется случайно сгенерированное поле с кораблями. Ваша задача уничтожить вражеские корабли" \
+            f"\n называя их возможные координаты на поле противника, при попаданий вам дается дополнительный выстрел"
+
+    def game_start():
+        keyw = input("Введите S для начала игры, R для получения правил или Ref для получения справки")
+        if keyw == "S":
+            game.move()
+        elif keyw == "R":
+            print(Rules)
+            game_start()
+        elif keyw == "Ref":
+            print(Reference)
+            game_start()
+        else:
+            print("Неправильный ввод, повторите попытку")
+            game_start()
+
+    game_start()
 
 
 start_game()
