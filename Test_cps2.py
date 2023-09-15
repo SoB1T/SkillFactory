@@ -235,7 +235,7 @@ class Game_Сontroler:  # класс игрового контролера
                         print(f"Компьютер поразил корабль игрока")
                 return True
 
-        if other_player == self.player_1:  # в случае промаха
+        else:  # в случае промаха
             moving_player.board.radar[shot.x][shot.y] = "O"
             other_player.board.grid[shot.x][shot.y] = "O"
             if other_player == self.player_2:
