@@ -213,7 +213,7 @@ class Game_Сontroler:  # класс игрового контролера
                 if ship.hit():
                     other_player.ships_destrou.append(1)
                     for i in ship.aura:
-                        if not other_player.board.move_in_board(i) or i in ship.coords:
+                        if other_player.board.move_in_board(i) or i in ship.coords:
                             continue
                         else:
                             moving_player.board.radar[shot.x][shot.y] = "X"
