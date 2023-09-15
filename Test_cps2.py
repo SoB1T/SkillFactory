@@ -57,7 +57,6 @@ class Ship:  # сам корабль
                 x = self.cell.x + i
                 y = self.cell.y
                 coords.append(Cell(x, y))
-
         return tuple(coords)  # возвращаем стартовые координаты
 
     def hit(self):  # если в корабль попадут
@@ -77,6 +76,9 @@ class Board:  # великое и ужасное игровое поле
         self.ships = []  # список с созданными экземплярами кораблей
         self.ship_vars = [3, 2, 2, 1, 1, 1, 1]  # временный вариант версий кораблей
 
+    def move_in_board(self, cell):  # проверка на то вход в границы поля
+        return cell.x not in range(0, self.size) or cell.y not in range(0, self.size)
+
     def ship_randomizer(self, ship_var):  # бесконечный кошмар генератор кораблей и заполнения поля ими
         count = 0
         while count <= 500:  # не уверен, что этот счетчик на что-то влияет, но работает же
@@ -95,9 +97,8 @@ class Board:  # великое и ужасное игровое поле
 
     def can_plays_ship(self, ship):
         for i in ship.coords:  # берет по одной координате и перебирает на соотвествие проверкам
-            x = i.x
-            y = i.y
-            if x in range(0, 6) and y in range(0, 6):  # корабль влезает в поле?
+
+            if not self.move_in_board(i):  # корабль влезает в поле?
                 pass
                 if i in self.full_coords:  # корабль не стоит в упор к другому корабли или на нем
                     return False  # корабль не соответствует требованиям
@@ -163,7 +164,6 @@ class Player:  # класс игроков
 
 
 class Ai(Player):  # класс компьютера
-
     def make_move(self):  # генератор ходов компа
         while True:
             x = random.randint(0, 5)
@@ -177,19 +177,13 @@ class Ai(Player):  # класс компьютера
 
 
 class User(Player):  # класс пользователя
-    def move_in_board(self, shot):  # проверка на то входит ли ход игрока в границы поля
-        if shot.x not in range(0, 6) and shot.y not in range(0, 6):
-            return False
-        else:
-            return True
-
     def make_move(self):  # принимает ход игрока и проверяет его на ошибки
         while True:
             try:
                 x, y = input("Сделайте свой ход, например A 1").split()
                 x, y = ord(x) - ord('A'), int(y) - 1
                 shot = Cell(x, y)
-                if not self.move_in_board(shot):
+                if self.board.move_in_board(shot):
                     raise CellOutException("Вне границы доски")
                 elif shot in self.player_move:
                     print("Сюда вы уже стреляли")
@@ -213,45 +207,42 @@ class Game_Сontroler:  # класс игрового контролера
         self.player_2 = Ai(6)  # компьютер
         self.players = [self.player_2, self.player_1]  # очередность игроков
 
-    def hit_check(self, shot,other_player):
+    def hit_check(self, shot, other_player,moving_player):
         for ship in other_player.ships:
             if shot in ship.coords:
                 if ship.hit():
                     other_player.ships_destrou.append(1)
+                    for i in ship.aura:
+                        if other_player.board.move_in_board(i) or i in ship.coords:
+                            continue
+                        else:
+                            moving_player.board.radar[shot.x][shot.y] = "X"
+                            other_player.board.grid[shot.x][shot.y] = "X"
+                            moving_player.board.radar[i.x][i.y] = "0"
+                            other_player.board.grid[i.x][i.y] = "0"
                     if other_player == self.player_2:
                         print(f"Игрок уничтожил корабль компьютера")
-                        for i in ship.aura:
-                            if i.x not in range(0, 6) and i.y not in range(0, 6):
-                                continue
-                            else:
-                                self.player_1.board.radar[i.x][i.y] = "X"
-                            return True
                     else:
                         print(f"Компьютер уничтожил корабль игрока")
-                        for i in ship.aura:
-                            if i.x not in range(0, 6) and i.y not in range(0, 6):
-                                continue
-                            else:
-                                self.player_1.board.grid[i.x][i.y] = "X"
-                            return True
+                    return True
+
                 else:
-                    if other_player == self.player_1:
-                        self.player_1.board.grid[shot.x][shot.y] = "X"
-                        print(f"Компьютер поразил корабль игрока")
-                        return True
-                    else:
+                    moving_player.board.radar[shot.x][shot.y] = "X"
+                    other_player.board.grid[shot.x][shot.y] = "X"
+                    if other_player == self.player_2:
                         print(f"Игрок поразил корабль компьютера")
-                        self.player_1.board.radar[shot.x][shot.y] = "X"
-                        return True
+                    else:
+                        print(f"Компьютер поразил корабль игрока")
+                return True
+
+        if other_player == self.player_1:  # в случае промаха
+            moving_player.board.radar[shot.x][shot.y] = "O"
+            other_player.board.grid[shot.x][shot.y] = "O"
+            if other_player == self.player_2:
+                print(f"Вы промазали{shot}")
             else:
-                if other_player == self.player_1:  # в случае промаха
-                    print(f"Компьютер промазал{shot}")
-                    self.player_1.board.grid[shot.x][shot.y] = "O"
-                    return False
-                else:
-                    print(f"Вы промазали{shot}")
-                    self.player_1.board.radar[shot.x][shot.y] = "O"
-                    return False
+                print(f"Компьютер промазал{shot}")
+        return False
 
     def move(self):  # основной цикл ходов
         random.shuffle(self.players)  # перед началом игры перемешивает список с игроками для выбора первого кто ходит
@@ -262,14 +253,14 @@ class Game_Сontroler:  # класс игрового контролера
             self.player_1.board.empty_fild()
             print("Ваше поле")
             self.player_1.board.fild()
-            if self.player_1.life_ships == 0:
+            if len(self.player_1.ships_destrou) == 7:
                 print("Поле противника(компьютер)")
                 self.player_2.board.fild()
                 print("Ваше поле")
                 self.player_1.board.fild()
                 print("Компьютер победил")
                 return True
-            elif self.player_2.life_ships == 0:
+            elif len(self.player_2.ships_destrou) == 7:
                 print("Поле противника(компьютер)")
                 self.player_2.board.fild()
                 print("Ваше поле")
@@ -277,8 +268,8 @@ class Game_Сontroler:  # класс игрового контролера
                 print("Игрок победил")
                 return True
             else:
-                shot=moving_player.make_move()
-                if self.hit_check(shot, other_player):
+                shot = moving_player.make_move()
+                if self.hit_check(shot, other_player, moving_player):
                     continue
                 else:
                     if moving_player == self.player_1:

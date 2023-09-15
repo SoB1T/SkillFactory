@@ -252,16 +252,18 @@ class Game_Сontroler:  # класс игрового контролера
             print("Поле противника(компьютер)")
             self.player_1.board.empty_fild()
             self.player_2.board.fild()  # отладка осторожно
+            print(self.player_2.life_ships)
+            print(self.player_2.ships_destrou)
             print("Ваше поле")
             self.player_1.board.fild()
-            if self.player_1.life_ships == 0:
+            if len(self.player_1.ships_destrou) == 7:
                 print("Поле противника(компьютер)")
                 self.player_2.board.fild()
                 print("Ваше поле")
                 self.player_1.board.fild()
                 print("Компьютер победил")
                 return True
-            elif self.player_2.life_ships == 0:
+            elif len(self.player_2.ships_destrou) == 7:
                 print("Поле противника(компьютер)")
                 self.player_2.board.fild()
                 print("Ваше поле")
