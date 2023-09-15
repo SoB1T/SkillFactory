@@ -220,10 +220,10 @@ class Game_Сontroler:  # класс игрового контролера
                             other_player.board.grid[shot.x][shot.y] = "X"
                             moving_player.board.radar[i.x][i.y] = "0"
                             other_player.board.grid[i.x][i.y] = "0"
-                        if other_player == self.player_2:
-                            print(f"Игрок уничтожил корабль компьютера")
-                        else:
-                            print(f"Компьютер уничтожил корабль игрока")
+                    if other_player == self.player_2:
+                        print(f"Игрок уничтожил корабль компьютера")
+                    else:
+                        print(f"Компьютер уничтожил корабль игрока")
                     return True
 
                 else:
